@@ -1,0 +1,14 @@
+{
+    "name": "amrudinbalic/utiliter",
+    "autoload": {
+        "psr-4": {
+            "App\\Utiliter\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "amrudin"
+        }
+    ],
+    "require": {}
+}
