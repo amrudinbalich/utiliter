@@ -13,5 +13,7 @@
             "name": "amrudin"
         }
     ],
-    "require": {}
+    "require": {
+        "guzzlehttp/guzzle": "^7.10"
+    }
 }
