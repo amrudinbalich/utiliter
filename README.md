@@ -1,4 +1,4 @@
-### Utiliter
+## Utiliter
 
 Aplikacija dolazi u sa dockerom, kako bi se osigurao local development sa istim depencencijima na više mašina.
 Requirement za pokretanje aplikacije je imati docker instaliran na mašini.
@@ -27,3 +27,35 @@ Skripta fetchuje zadnje tečajeve sa ECB-a i importuje ih u bazu.
 Ako su podaci za trenutni datum već importovani, prikazuje info poruku.
 
 Dedicated servis: `src/Services/EcbImport.php`
+
+---
+
+### Zadatak 2 — JSON Import
+
+Otvoriti `localhost:8080/zadatak2.php` u browseru.
+
+Skripta učitava `storage/data.json` i importuje proizvode u bazu podataka.
+Response prikazuje importovane podatke u JSON formatu kao vizuelni prikaz funkcionalnosti.
+
+#### Struktura tablica
+
+- `zadatak2_kategorije` — jedinstvene kategorije proizvoda
+- `zadatak2_proizvodjaci` — normalizirani nazivi proizvođača
+- `zadatak2_produkti` — proizvodi s foreign key referencama na kategorije i proizvođače
+
+#### Proces normalizacije
+
+Izvorni JSON je denormaliziran (flat struktura) — kategorije i proizvođači se ponavljaju uz svaki proizvod. Servis ih re-normalizira u relacijsku strukturu prije inserta.
+
+**Koraci:**
+1. JSON se parsira i raspoređuje u tri grupe: kategorije, proizvođači, proizvodi
+2. Izvlače se jedinstvene kategorije i normaliziraju nazivi proizvođača (`"Marka 1"` → `"Marka1"`)
+3. Kategorije i proizvođači se insertaju u zasebne tablice
+4. Fetchaju se ID mape (`naziv → id`) za obje tablice
+5. Proizvodi se insertaju s odgovarajućim `kategorija_id` i `proizvodjac_id` foreign keyevima
+
+#### Dedicated servis
+
+`src/Services/ProductImport.php`
+
+Servis exposeuje jednu javnu metodu `import(): void` koja interno orkestrira normalizaciju i unos podataka u bazu.
