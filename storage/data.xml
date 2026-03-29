@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Catalog>
+	<CatalogProduct code="product1" category="cat1" manufacturer="brand1" tax="25.00" tax_include_in_price="1" basic_price="1499.99" discount_percent="10.00" available_qty="10.00" visible="1">
+		<Description lang="hr">
+			<Title><![CDATA[Naziv proizvoda 1]]></Title>
+			<Content><![CDATA[Sadržaj]]></Content>
+		</Description>
+		<Description lang="en">
+			<Title><![CDATA[Product title 1]]></Title>
+			<Content><![CDATA[Content]]></Content>
+		</Description>
+	</CatalogProduct>
+
+	<CatalogProduct code="product2" category="cat2" manufacturer="brand1" tax="25.00" tax_include_in_price="1" basic_price="100.00" discount_percent="0.00" available_qty="1.00" visible="0" disable_added_to_cart="0" weight="0.125" extra_categories="cat1,cat2" extra_price_trgovina="149.99" minimum_qty="1.00" position="1" loyalty_point="15">
+		<Description lang="hr">
+			<Title><![CDATA[Naziv proizvoda 2]]></Title>
+			<Content><![CDATA[Sadržaj]]></Content>
+		</Description>
+		<Description lang="en">
+			<Title><![CDATA[Product title 2]]></Title>
+			<Content><![CDATA[Content]]></Content>
+		</Description>
+	</CatalogProduct>
+
+	<CatalogProduct code="product3">
+		<Description lang="hr">
+			<Title><![CDATA[Naziv proizvoda x]]></Title>
+			<Content><![CDATA[Sadržaj]]></Content>
+		</Description>
+		<Description lang="en">
+			<Title><![CDATA[Product title x]]></Title>
+			<Content><![CDATA[Content]]></Content>
+		</Description>
+	</CatalogProduct>
+
+	<CatalogProduct code="product4">
+		<Description lang="hr">
+			<Title><![CDATA[Naziv proizvoda x]]></Title>
+			<Content><![CDATA[Sadržaj]]></Content>
+		</Description>
+	</CatalogProduct>
+
+	<CatalogProduct code="product5">
+		<Description lang="en">
+			<Title><![CDATA[Product title x]]></Title>
+			<Content><![CDATA[Content]]></Content>
+		</Description>
+	</CatalogProduct>
+
+	<CatalogProduct code="product6">
+		<Description lang="hr">
+			<Title><![CDATA[Naziv proizvoda x]]></Title>
+			<Content><![CDATA[Sadržaj]]></Content>
+		</Description>
+	</CatalogProduct>
+
+	<CatalogProduct code="product7">
+		<Description lang="hr">
+			<Title><![CDATA[Naziv proizvoda x]]></Title>
+			<Content><![CDATA[Sadržaj]]></Content>
+		</Description>
+		<Description lang="en">
+			<Title><![CDATA[Product title x]]></Title>
+			<Content><![CDATA[Content]]></Content>
+		</Description>
+	</CatalogProduct>
+
+	<CatalogProduct code="product8"/>
+
+	<CatalogProduct code="product9" category="cat2" manufacturer="brand1" tax="25.00" tax_include_in_price="1" basic_price="100.00" discount_percent="0.00" available_qty="1.00" visible="0" disable_added_to_cart="0" weight="0.125" extra_categories="cat1,cat2" extra_price_trgovina="149.99" minimum_qty="1.00" position="1" loyalty_point="15">
+		<Description lang="hr">
+			<Title><![CDATA[Naziv proizvoda x]]></Title>
+			<Content><![CDATA[Sadržaj]]></Content>
+		</Description>
+		<Description lang="en">
+			<Title><![CDATA[Product title x]]></Title>
+			<Content><![CDATA[Content]]></Content>
+		</Description>
+	</CatalogProduct>
+
+	<CatalogProduct code="product10">
+		<Description lang="hr">
+			<Title><![CDATA[Naziv proizvoda x]]></Title>
+			<Content><![CDATA[Sadržaj]]></Content>
+		</Description>
+		<Description lang="en">
+			<Title><![CDATA[Product title x]]></Title>
+			<Content><![CDATA[Content]]></Content>
+		</Description>
+	</CatalogProduct>
+
+	<CatalogProduct code="product11"/>
+
+	<CatalogProduct code="product12"/>
+
+	<CatalogProduct code="product13"/>
+
+	<CatalogProduct code="product14"/>
+
+	<CatalogProduct code="product15"/>
+
+	<CatalogProduct code="product16"/>
+
+	<CatalogProduct code="product17"/>
+
+	<CatalogProduct code="product18"/>
+
+	<CatalogProduct code="product19"/>
+
+	<CatalogProduct code="product20"/>
+
+</Catalog>
