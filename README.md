@@ -1,14 +1,15 @@
-## Utiliter
+# Utiliter
 
 Aplikacija dolazi u sa dockerom, kako bi se osigurao local development sa istim depencencijima na više mašina.
 Requirement za pokretanje aplikacije je imati docker instaliran na mašini.
 Aplikacija dolazi zipovana, ali u slučaju da je potreban versioning, takoðer repository je i na Githubu.
 
-Github repo link: https://github.com/amrudinbalich/utiliter
+Github repo link: [https://github.com/amrudinbalich/utiliter](https://github.com/amrudinbalich/utiliter)
 
 Pokretanje aplikacije:
-1. unzip / git clone https://github.com/amrudinbalich/utiliter
-2. ```docker compose up -d```
+
+1. unzip / git clone [https://github.com/amrudinbalich/utiliter](https://github.com/amrudinbalich/utiliter)
+2. `docker compose up -d`
 
 Portovi podeseni na docker-compose.yml fajlu bi trebali biti nezauzeti.
 
@@ -48,6 +49,7 @@ Response prikazuje importovane podatke u JSON formatu kao vizuelni prikaz funkci
 Izvorni JSON je denormaliziran (flat struktura) — kategorije i proizvođači se ponavljaju uz svaki proizvod. Servis ih re-normalizira u relacijsku strukturu prije inserta.
 
 **Koraci:**
+
 1. JSON se parsira i raspoređuje u tri grupe: kategorije, proizvođači, proizvodi
 2. Izvlače se jedinstvene kategorije i normaliziraju nazivi proizvođača (`"Marka 1"` → `"Marka1"`)
 3. Kategorije i proizvođači se insertaju u zasebne tablice
@@ -59,3 +61,41 @@ Izvorni JSON je denormaliziran (flat struktura) — kategorije i proizvođači s
 `src/Services/ProductImport.php`
 
 Servis exposeuje jednu javnu metodu `import(): void` koja interno orkestrira normalizaciju i unos podataka u bazu.
+
+---
+
+### Zadatak 3 — XML Import + Filter
+
+#### Import
+
+Otvoriti `localhost:8080/zadatak3-import.php` u browseru.
+
+Skripta učitava `storage/data.xml` i importuje proizvode u bazu podataka.
+
+#### Filter / Showcase
+
+Otvoriti `localhost:8080/zadatak3.php` u browseru.
+
+Prikazuje proizvode ovisno o odabranom jeziku. Proizvodi koji nemaju opis na odabranom jeziku se **ne prikazuju**.
+
+Dostupni jezici: `HR` | `EN`
+
+#### Struktura tablica
+
+Podaci su normalizirani u pet tablica:
+
+- `zadatak3_categories` — jedinstvene kategorije iz XML-a
+- `zadatak3_manufacturers` — jedinstveni proizvođači iz XML-a
+- `zadatak3_produkti` — atributi proizvoda s FK referencama na kategorije i proizvođače
+- `zadatak3_opisi` — naslovi i sadržaj po jeziku, FK na `zadatak3_produkti` (one-to-many)
+- `zadatak3_extras` — dinamički extra atributi proizvoda (EAV pattern)
+
+#### Prijevodi
+
+UI labele su externalizirane u `storage/translations.php` — dodavanje novog jezika ne zahtijeva izmjenu view logike.
+
+#### Dedicated servis
+
+`src/Services/XmlProductImport.php`
+
+Servis exposeuje jednu javnu metodu `import(): void` koja interno orkestrira parsiranje XML-a, normalizaciju i unos podataka u bazu.
