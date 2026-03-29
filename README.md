@@ -99,3 +99,24 @@ UI labele su externalizirane u `storage/translations.php` — dodavanje novog je
 `src/Services/XmlProductImport.php`
 
 Servis exposeuje jednu javnu metodu `import(): void` koja interno orkestrira parsiranje XML-a, normalizaciju i unos podataka u bazu.
+
+---
+
+### Zadatak 4 — Step Counter
+
+Otvoriti `localhost:8080/zadatak4.php` u browseru.
+
+Stranica broji korake klikom na link — bez JavaScripta, state se čuva u PHP sesiji.
+
+**Ponašanje:**
+- Početni tekst: *"Kreni hodati"*
+- Nakon svakog klika: *"Prošli ste XY koraka"*
+- Nakon 10 koraka: *"Čestitamo, prošli ste 10 koraka u XY sec/min!"* — brojač se automatski resetuje
+
+Klikom na dugme 'Reset' citav proces se resetuje, vazno je napomenuti da je interni max limit za korake 10.
+
+#### Dedicated servis
+
+`src/Services/StepCounter.php`
+
+OOP klasa koja enkapsulira svu logiku brojanja — inkrement, reset, provjera završetka i formatiranje prikaza. State se čuva u `$_SESSION`.
