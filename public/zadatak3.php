@@ -1,6 +1,7 @@
 <?php
 
 $database = require __DIR__ . '/../src/bootstrap.php';
+$translations = require __DIR__ . '/../storage/translations.php';
 
 // get lang
 $lang = $_GET['lang'] ?? 'hr';
@@ -8,11 +9,16 @@ if (!in_array($lang, ['hr', 'en'])) {
     $lang = 'hr';
 }
 
+$t = $translations[$lang];
+
 // get products
 $proizvodi = $database->fetchAll(
-    "SELECT p.code, o.title, o.content 
+    "SELECT p.code, o.title, o.content,
+            c.name AS category, m.name AS manufacturer
      FROM zadatak3_produkti p
      INNER JOIN zadatak3_opisi o ON p.id = o.product_id
+     LEFT JOIN zadatak3_categories c ON p.category_id = c.id
+     LEFT JOIN zadatak3_manufacturers m ON p.manufacturer_id = m.id
      WHERE o.lang = ?",
     [$lang]
 );
@@ -34,7 +40,7 @@ $total = count($proizvodi);
         <a href="?lang=en">🇬🇧 English</a>
     </nav>
 
-    <p><?= $lang === 'hr' ? 'Prikazano proizvoda:' : 'Shown Results:' ?> <strong><?= $total ?></strong></p>
+    <p><?= $t['shown_results'] ?> <strong><?= $total ?></strong></p>
 
     <hr>
 
@@ -42,7 +48,15 @@ $total = count($proizvodi);
         <div>
             <h3><?= htmlspecialchars($p->title) ?></h3>
             <p><?= htmlspecialchars($p->content) ?></p>
-            <small>Code: <?= htmlspecialchars($p->code) ?></small>
+            <small><?= $t['code'] ?> <?= htmlspecialchars($p->code) ?></small>
+
+            <?php if ($p->category): ?>
+                <small><?= $t['category'] ?> <?= htmlspecialchars($p->category) ?></small>
+            <?php endif; ?>
+
+            <?php if ($p->manufacturer): ?>
+                <small><?= $t['manufacturer'] ?> <?= htmlspecialchars($p->manufacturer) ?></small>
+            <?php endif; ?>
         </div>
         <hr>
     <?php endforeach; ?>
