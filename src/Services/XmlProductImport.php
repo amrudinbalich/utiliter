@@ -2,10 +2,12 @@
 
 namespace App\Utiliter\Services;
 
+use App\Utiliter\Contracts\ImportInterface;
 use App\Utiliter\Foundation\Database;
 use SimpleXMLElement;
 
-class XmlProductImport {
+class XmlProductImport implements ImportInterface
+{
     public function __construct(private Database $db) {}
 
     public function import(): void

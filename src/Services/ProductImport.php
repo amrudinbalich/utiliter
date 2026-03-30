@@ -2,9 +2,11 @@
 
 namespace App\Utiliter\Services;
 
+use App\Utiliter\Contracts\ImportInterface;
 use App\Utiliter\Foundation\Database;
 
-class ProductImport {
+class ProductImport implements ImportInterface
+{
     public function __construct(private Database $db) {}
 
     /**

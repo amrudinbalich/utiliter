@@ -2,12 +2,18 @@
 
 namespace App\Utiliter\Services;
 
+use App\Utiliter\Contracts\ImportInterface;
 use App\Utiliter\Foundation\Database;
 use GuzzleHttp\Client;
 
-class EcbImport {
+class EcbImport implements ImportInterface
+{
 
     const string ECB = 'https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml';
+
+    private string $date;
+
+    private bool $alreadyImported = false;
 
     public function __construct(
         private Database $db, 
@@ -16,18 +22,33 @@ class EcbImport {
 
     /**
      * Import latest central bank currency data for this date.
-     * @return string
+     * @return void
      */
-    public function import(): string
+    public function import(): void
     {
         [$date, $currencyRates] = $this->fetch();
+        $this->date = $date;
 
         if($this->currenciesExists($date)) {
-            return "<strong>info:</strong> Currencies for <strong>{$date}</strong> are already imported.";
+            $this->alreadyImported = true;
+            return;
         }
 
         $this->insertCurrencies($date, $currencyRates);
-        return "Currencies imported for (date): <strong>{$date}</strong>";
+    }
+
+    /**
+     * Import finished? Then inform user that it is imported.
+     * If the import is finished in this runtime, then notify about the status.
+     * @return string
+     */
+    public function getImportTextStatus(): string
+    {
+        if ($this->alreadyImported) {
+            return "<strong>info:</strong> Currencies for <strong>{$this->date}</strong> are already imported.";
+        }
+    
+        return "Currencies imported for (date): <strong>{$this->date}</strong>";
     }
 
     /**
