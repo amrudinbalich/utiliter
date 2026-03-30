@@ -1,122 +1,151 @@
 # Utiliter
 
+## Docker / Kontenjerizacija
+
 Aplikacija dolazi u sa dockerom, kako bi se osigurao local development sa istim depencencijima na više mašina.
 Requirement za pokretanje aplikacije je imati docker instaliran na mašini.
 Aplikacija dolazi zipovana, ali u slučaju da je potreban versioning, takoðer repository je i na Githubu.
 
-Github repo link: [https://github.com/amrudinbalich/utiliter](https://github.com/amrudinbalich/utiliter)
+## Testovi
 
-Pokretanje aplikacije:
+Testovi su coverani sa PHPUnti testing frameworkom i oni pokrivaju esencijalne funkcionalnosti u 'aplikaciji'.
+Sve testove mozete naci u ```tests``` folderu.
 
-1. unzip / git clone [https://github.com/amrudinbalich/utiliter](https://github.com/amrudinbalich/utiliter)
-2. `docker compose up -d`
-
-Portovi podeseni na docker-compose.yml fajlu bi trebali biti nezauzeti.
-
-Struktura aplikacije / dependenciji:
-1. Server: nginx
-2. Server-side jezik: PHP 8.5 / PHP-FPM (Fast CGI Process)
-3. SQL DBMS: mySQL 8.4
+Testovi se pokrecu dok su u docker kontenjeru, sa komandom:
+```bash
+docker compose exec php ./vendor/bin/phpunit
+```
 
 ---
 
-### Zadatak 1 — ECB Import
+## 🚀 Pokretanje aplikacije
 
-Otvoriti `localhost:8080/zadatak1/` u browseru.
+1. unzip / git clone https://github.com/amrudinbalich/utiliter  
+2. pokrenuti:
 
-Skripta fetchuje zadnje tečajeve sa ECB-a i importuje ih u bazu.
-Ako su podaci za trenutni datum već importovani, prikazuje info poruku.
+```bash
+docker compose up -d
+```
 
-Dedicated servis: `src/Services/EcbImport.php`
+⚠️ Portovi definisani u `docker-compose.yml` moraju biti slobodni.
 
 ---
 
-### Zadatak 2 — JSON Import
+## ⚙️ Tehnologije
 
-Otvoriti `localhost:8080/zadatak2.php` u browseru.
+- **Server:** nginx  
+- **Backend:** PHP 8.5 (PHP-FPM)  
+- **Baza:** MySQL 8.4  
 
-Skripta učitava `storage/data.json` i importuje proizvode u bazu podataka.
-Response prikazuje importovane podatke u JSON formatu kao vizuelni prikaz funkcionalnosti.
+---
 
-#### Struktura tablica
+## 🗄️ Database dijagram
 
-- `zadatak2_kategorije` — jedinstvene kategorije proizvoda
-- `zadatak2_proizvodjaci` — normalizirani nazivi proizvođača
-- `zadatak2_produkti` — proizvodi s foreign key referencama na kategorije i proizvođače
+[Database diagram](docs/database-diagram.png)  
+[Database ERD Link](https://dbdiagram.io/d/697f95ddbd82f5fce244f840)
 
-#### Proces normalizacije
+---
 
-Izvorni JSON je denormaliziran (flat struktura) — kategorije i proizvođači se ponavljaju uz svaki proizvod. Servis ih re-normalizira u relacijsku strukturu prije inserta.
+## 📌 Zadatak 1 — ECB Import
+
+Otvoriti:  
+`http://localhost:8080/zadatak1/`
+
+Skripta dohvaća najnovije tečajeve sa ECB-a i importuje ih u bazu podataka.  
+Ako su podaci za trenutni datum već importovani, prikazuje se informativna poruka i preskače unos.
+
+**Servis:**  
+`src/Services/EcbImport.php`
+
+---
+
+## 📌 Zadatak 2 — JSON Import
+
+Otvoriti:  
+`http://localhost:8080/zadatak2.php`
+
+Skripta učitava `storage/data.json` i importuje proizvode u bazu.  
+Response vraća JSON prikaz importovanih podataka kao potvrdu funkcionalnosti.
+
+### Struktura tablica
+
+- `zadatak2_kategorije` — jedinstvene kategorije proizvoda  
+- `zadatak2_proizvodjaci` — normalizirani proizvođači  
+- `zadatak2_produkti` — proizvodi sa FK referencama  
+
+### Proces normalizacije
+
+Izvorni JSON je denormaliziran (flat struktura), gdje se kategorije i proizvođači ponavljaju uz svaki proizvod.  
+Servis vrši transformaciju u relacijsku strukturu prije inserta.
 
 **Koraci:**
 
-1. JSON se parsira i raspoređuje u tri grupe: kategorije, proizvođači, proizvodi
-2. Izvlače se jedinstvene kategorije i normaliziraju nazivi proizvođača (`"Marka 1"` → `"Marka1"`)
-3. Kategorije i proizvođači se insertaju u zasebne tablice
-4. Fetchaju se ID mape (`naziv → id`) za obje tablice
-5. Proizvodi se insertaju s odgovarajućim `kategorija_id` i `proizvodjac_id` foreign keyevima
+1. Parsiranje JSON-a  
+2. Ekstrakcija jedinstvenih kategorija i normalizacija proizvođača (`"Marka 1"` → `"Marka1"`)  
+3. Insert kategorija i proizvođača  
+4. Mapiranje (`naziv → id`)  
+5. Insert proizvoda sa FK referencama  
 
-#### Dedicated servis
-
+**Servis:**  
 `src/Services/ProductImport.php`
-
-Servis exposeuje jednu javnu metodu `import(): void` koja interno orkestrira normalizaciju i unos podataka u bazu.
 
 ---
 
-### Zadatak 3 — XML Import + Filter
+## 📌 Zadatak 3 — XML Import + Filter
 
-#### Import
+### Import
 
-Otvoriti `localhost:8080/zadatak3-import.php` u browseru.
+Otvoriti:  
+`http://localhost:8080/zadatak3-import.php`
 
-Skripta učitava `storage/data.xml` i importuje proizvode u bazu podataka.
+Skripta učitava `storage/data.xml` i importuje proizvode u bazu.
 
-#### Filter / Showcase
+### Filter / Showcase
 
-Otvoriti `localhost:8080/zadatak3.php` u browseru.
+Otvoriti:  
+`http://localhost:8080/zadatak3.php`
 
-Prikazuje proizvode ovisno o odabranom jeziku. Proizvodi koji nemaju opis na odabranom jeziku se **ne prikazuju**.
+Prikaz proizvoda zavisi od odabranog jezika.  
+Proizvodi bez odgovarajućeg prijevoda se **ne prikazuju**.
 
 Dostupni jezici: `HR` | `EN`
 
-#### Struktura tablica
+### Struktura tablica
 
-Podaci su normalizirani u pet tablica:
+- `zadatak3_categories`
+- `zadatak3_manufacturers`
+- `zadatak3_produkti`
+- `zadatak3_opisi`
+- `zadatak3_extras`
 
-- `zadatak3_categories` — jedinstvene kategorije iz XML-a
-- `zadatak3_manufacturers` — jedinstveni proizvođači iz XML-a
-- `zadatak3_produkti` — atributi proizvoda s FK referencama na kategorije i proizvođače
-- `zadatak3_opisi` — naslovi i sadržaj po jeziku, FK na `zadatak3_produkti` (one-to-many)
-- `zadatak3_extras` — dinamički extra atributi proizvoda (EAV pattern)
+### Prijevodi
 
-#### Prijevodi
+UI labele su izdvojene u `storage/translations.php`, što omogućava lako dodavanje novih jezika bez izmjene view logike.
 
-UI labele su externalizirane u `storage/translations.php` — dodavanje novog jezika ne zahtijeva izmjenu view logike.
-
-#### Dedicated servis
-
+**Servis:**  
 `src/Services/XmlProductImport.php`
-
-Servis exposeuje jednu javnu metodu `import(): void` koja interno orkestrira parsiranje XML-a, normalizaciju i unos podataka u bazu.
 
 ---
 
-### Zadatak 4 — Step Counter
+## 📌 Zadatak 4 — Step Counter
 
-Otvoriti `localhost:8080/zadatak4.php` u browseru.
+Otvoriti:  
+`http://localhost:8080/zadatak4.php`
 
-Stranica broji korake klikom na link — bez JavaScripta, state se čuva u PHP sesiji.
+Jednostavna aplikacija za brojanje koraka putem klikova — bez JavaScript-a.  
+State se čuva u PHP sesiji.
 
-**Ponašanje:**
-- Početni tekst: *"Kreni hodati"*
-- Nakon svakog klika: *"Prošli ste XY koraka"*
-- Nakon 10 koraka: *"Čestitamo, prošli ste 10 koraka u XY sec/min!"* — brojač se automatski resetuje
+### Ponašanje
 
-Klikom na dugme 'Reset' citav proces se resetuje, vazno je napomenuti da je interni max limit za korake 10.
+- Početno: *"Kreni hodati"*  
+- Nakon klika: *"Prošli ste XY koraka"*  
+- Nakon 10 koraka:  
+  *"Čestitamo, prošli ste 10 koraka u XY sec/min!"*  
 
-#### Dedicated servis
+Brojač se automatski resetuje nakon limita.
 
+Klikom na **Reset** dugme proces se vraća na početno stanje.  
+Maksimalni broj koraka: **10**
+
+**Servis:**  
 `src/Services/StepCounter.php`
-
-OOP klasa koja enkapsulira svu logiku brojanja — inkrement, reset, provjera završetka i formatiranje prikaza. State se čuva u `$_SESSION`.
