@@ -9,16 +9,18 @@ use GuzzleHttp\Client;
 class EcbImport implements ImportInterface
 {
 
-    const string ECB = 'https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml';
+    private string|null $ecbApi = null;
 
-    private string $date;
+    private string|null $date = null;
 
     private bool $alreadyImported = false;
 
     public function __construct(
         private Database $db, 
         private Client $client = new Client()
-    ) {}
+    ) {
+        $this->ecbApi = env('ECB_API');
+    }
 
     /**
      * Import latest central bank currency data for this date.
@@ -45,19 +47,23 @@ class EcbImport implements ImportInterface
     public function getImportTextStatus(): string
     {
         if ($this->alreadyImported) {
-            return "<strong>info:</strong> Currencies for <strong>{$this->date}</strong> are already imported.";
+            return <<<HTML
+                <strong>info:</strong> Currencies for <strong>{$this->date}</strong> are already imported.
+            HTML;
         }
     
-        return "Currencies imported for (date): <strong>{$this->date}</strong>";
+        return <<<HTML
+            Currencies imported for (date): <strong>{$this->date}</strong>
+        HTML;
     }
 
     /**
      * Fetch ECB Data from cloud.
-     * @return array [ date, currencyRates[] ]
+     * @return array
      */
     private function fetch(): array
     {
-        $response = $this->client->get(self::ECB);
+        $response = $this->client->get($this->ecbApi);
         $contents = $response->getBody()->getContents();
 
         $envelope = simplexml_load_string($contents);
