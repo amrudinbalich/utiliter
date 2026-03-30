@@ -3,7 +3,6 @@
 $database = require __DIR__ . '/../src/bootstrap.php';
 $translations = require __DIR__ . '/../storage/translations.php';
 
-// get lang
 $lang = $_GET['lang'] ?? 'hr';
 if (!in_array($lang, ['hr', 'en'])) {
     $lang = 'hr';
@@ -11,7 +10,6 @@ if (!in_array($lang, ['hr', 'en'])) {
 
 $t = $translations[$lang];
 
-// get products
 $proizvodi = $database->fetchAll(
     "SELECT p.code, o.title, o.content,
             c.name AS category, m.name AS manufacturer

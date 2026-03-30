@@ -9,11 +9,14 @@ class StepCounter
     public function __construct()
     {
         if (!isset($_SESSION['steps'])) {
-            $_SESSION['steps'] = 0;
-            $_SESSION['start_time'] = time();
+            $this->reset(); // set in this case
         }
     }
 
+    /**
+     * Increment number of steps (max=10).
+     * @return void
+     */
     public function increment(): void
     {
         if ($this->getSteps() < self::MAX_STEPS) {
@@ -21,17 +24,29 @@ class StepCounter
         }
     }
 
+    /**
+     * Reset (or set) state to initial values.
+     * @return void
+     */
     public function reset(): void
     {
         $_SESSION['steps'] = 0;
         $_SESSION['start_time'] = time();
     }
 
+    /**
+     * Get number of made steps.
+     * @return int
+     */
     public function getSteps(): int
     {
         return $_SESSION['steps'];
     }
 
+    /**
+     * Get final status.
+     * @return bool
+     */
     public function isFinished(): bool
     {
         return $this->getSteps() >= self::MAX_STEPS;
@@ -56,8 +71,7 @@ class StepCounter
     public function formatUserText() : string
     {
         $steps = $this->getSteps();
-
-        // finished
+        
         if($this->isFinished()) {
             $elapsed = $this->getElapsed();
             $this->reset();
@@ -66,7 +80,6 @@ class StepCounter
             HTML;
         }
 
-        // steps
         if($steps > 0) {
             return <<<HTML
                 <p>Prošli ste {$steps} koraka.</p>
@@ -74,7 +87,6 @@ class StepCounter
             HTML;
         }
 
-        // default
         return <<<HTML
             <p>Kreni hodati</p>
             <a href="?action=step">Hodaj</a>

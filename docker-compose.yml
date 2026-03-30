@@ -19,11 +19,18 @@ services:
     depends_on:
       - mysql
     environment:
+      - APP_NAME=Utiliter
+      - ECB_API=https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml
       - DB_HOST=mysql
-      - DB_PORT=3306
+      - DB_PORT=3306 # main port
       - DB_NAME=utiliter
       - DB_USER=utiliter_admin
       - DB_PASS=admin
+      - TEST_DB_HOST=mysql_test
+      - TEST_DB_PORT=3306 # test db port
+      - TEST_DB_NAME=utiliter_test
+      - TEST_DB_USER=utiliter_admin_test
+      - TEST_DB_PASS=admin_test
 
   mysql:
     image: mysql:8.4
@@ -36,7 +43,21 @@ services:
       - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
       - mysql_data:/var/lib/mysql
     ports:
-      - "3307:3306" # use 3307 (usually not taken by local setup)
+      - "3307:3306" # 3307 - outside container, 3306 - inside container
+
+  mysql_test:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: admin_test
+      MYSQL_DATABASE: utiliter_test
+      MYSQL_USER: utiliter_admin_test
+      MYSQL_PASSWORD: admin_test
+    volumes:
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - mysql_data_test:/var/lib/mysql
+    ports:
+      - "3308:3306"
 
 volumes:
   mysql_data:
+  mysql_data_test:

@@ -10,13 +10,25 @@ class Database {
 
     private PDO $pdo;
 
+    /**
+     * Initialize connection with database.
+     * @throws PDOException
+     */
     public function __construct()
     {
+        [
+            $user,
+            $pass,
+            $host,
+            $port,
+            $database
+        ] = $this->getEnvSettings();
+
         try {
             $this->pdo = new PDO(
-                $this->buildDsn(),
-                env('DB_USER', 'utiliter_admin'),
-                env('DB_PASS', 'admin'),
+                $this->buildDsn($host, $port, $database),
+                $user,
+                $pass,
                 [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
@@ -27,13 +39,37 @@ class Database {
         }
     }
 
-    private function buildDsn(): string
+    /**
+     * Based on current runtime enviroment get the connection details.
+     * @return array<string|null>
+     */
+    private function getEnvSettings(): array
+    {
+        $prefix = (bool) env('testing') ? 'TEST_' : '';
+
+        return [
+            env("{$prefix}DB_USER", 'utiliter_admin'),
+            env("{$prefix}DB_PASS", 'admin'),
+            env("{$prefix}DB_HOST", 'mysql'),
+            env("{$prefix}DB_PORT", '3306'),
+            env("{$prefix}DB_NAME", 'utiliter')
+        ];
+    }
+
+    /**
+     * Build connection string.
+     * @param string $host
+     * @param string $port
+     * @param string $database
+     * @return string
+     */
+    private function buildDsn(string $host, string $port, string $database): string
     {
         return sprintf(
             'mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
-            env('DB_HOST', 'mysql'),
-            env('DB_PORT', '3306'),
-            env('DB_NAME', 'utiliter')
+            $host,
+            $port,
+            $database
         );
     }
 

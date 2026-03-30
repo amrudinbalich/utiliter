@@ -16,6 +16,11 @@ Testovi se pokrecu dok su u docker kontenjeru, sa komandom:
 docker compose exec php ./vendor/bin/phpunit
 ```
 
+Usput, baci pogled na ```docker-compose.yml``` - vidis nesto zanimljivo u servisima?
+Dev baza i test baza su odvojeni :)
+
+To znaci da prilikom performanja feature testova podaci koji su u dev bazi ostaju netaknuti.
+
 ---
 
 ## 🚀 Pokretanje aplikacije
@@ -35,7 +40,7 @@ docker compose up -d
 
 - **Server:** nginx  
 - **Backend:** PHP 8.5 (PHP-FPM)  
-- **Baza:** MySQL 8.4  
+- **Baza:** MySQL 8.4 (dev i test)
 
 ---
 

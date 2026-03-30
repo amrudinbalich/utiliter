@@ -8,7 +8,7 @@
  * 
  * @return string
  */
-function env(string $key, ?string $default): string {
+function env(string $key, ?string $default = null): ?string {
     return $_ENV[$key] ?? $default;
 }
 

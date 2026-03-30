@@ -48,6 +48,7 @@ class ProductImport implements ImportInterface
         )));
 
         // normalized products
+        // DTO Pattern
         $products = array_map(fn($p) => [
             'robaid' => $p['robaid'],
             'sifra' => $p['SIfra'],
@@ -109,6 +110,7 @@ class ProductImport implements ImportInterface
      * @param string $table
      * @return array
      */
+    // todo: implement DRY principle
     private function buildMap(string $table): array
     {
         $rows = $this->db->fetchAll("SELECT id, naziv FROM {$table}");
@@ -128,6 +130,7 @@ class ProductImport implements ImportInterface
      */
     private function insertProducts(array $products, array $categoryMap, array $manufacturerMap): void
     {
+        // $p can be of Type Product
         foreach ($products as $p) {
             $this->db->execute(
                 "INSERT IGNORE INTO zadatak2_produkti

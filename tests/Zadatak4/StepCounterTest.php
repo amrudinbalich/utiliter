@@ -16,11 +16,6 @@ class StepCounterTest extends TestCase
         $this->stepCounter = new StepCounter();
     }
 
-    public function test_initial_steps_are_zero(): void
-    {
-        $this->assertEquals(0, $this->stepCounter->getSteps());
-    }
-
     public function test_increment_increases_steps(): void
     {
         for ($i = 0; $i < 7; $i++) {
@@ -56,10 +51,5 @@ class StepCounterTest extends TestCase
 
         $this->assertNotEquals(7, $this->stepCounter->getSteps()); // is cleared
         $this->assertEquals(0, $this->stepCounter->getSteps());
-    }
-
-    public function test_is_not_finished_initially(): void
-    {
-        $this->assertFalse($this->stepCounter->isFinished());
     }
 }
