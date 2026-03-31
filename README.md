@@ -32,6 +32,8 @@ To znaci da prilikom performanja feature testova podaci koji su u dev bazi ostaj
 docker compose up -d
 ```
 
+3. composer install
+
 ⚠️ Portovi definisani u `docker-compose.yml` moraju biti slobodni.
 
 ---
