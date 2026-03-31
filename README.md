@@ -36,6 +36,8 @@ docker compose up -d
 
 ⚠️ Portovi definisani u `docker-compose.yml` moraju biti slobodni.
 
+Port aplikacije: http://localhost:8080/
+
 ---
 
 ## ⚙️ Tehnologije
