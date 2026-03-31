@@ -12,20 +12,20 @@ class XmlProductImport implements ImportInterface
 
     public function import(): void
     {
-        $xml = simplexml_load_string(storage('data.xml'));
+        $xml = simplexml_load_string(data: storage('data.xml'));
 
         foreach ($xml->CatalogProduct as $product) {
             $this->insertCategory((string) $product['category']);
             $this->insertManufacturer((string) $product['manufacturer']);
         }
-    
-        // buildmap nakon sto su sve kategorije/proizvodjaci insertani
+
+        // get maps
         $categoryMap = $this->buildMap('zadatak3_categories');
         $manufacturerMap = $this->buildMap('zadatak3_manufacturers');
     
         foreach ($xml->CatalogProduct as $product) {
             $id = $this->insertProduct($product, $categoryMap, $manufacturerMap);
-            $this->insertOpisi($id, $product);
+            $this->insertDescription($id, $product);
             $this->insertExtras($id, $product);
         }
     }
@@ -36,6 +36,7 @@ class XmlProductImport implements ImportInterface
      * @param string $table
      * @return array
      */
+    // implement DRY Principle
     private function buildMap(string $table): array
     {
         $rows = $this->db->fetchAll("SELECT id, name FROM {$table}");
@@ -48,6 +49,7 @@ class XmlProductImport implements ImportInterface
 
     private function insertProduct(SimpleXMLElement $p, array $categoryMap, array $manufacturerMap): int
     {
+        // todo: implement dto
         return $this->db->execute(
             'INSERT IGNORE INTO zadatak3_produkti 
                 (code, category_id, manufacturer_id, tax, tax_include_in_price,
@@ -91,7 +93,7 @@ class XmlProductImport implements ImportInterface
         );
     }
 
-    private function insertOpisi(int $productId, SimpleXMLElement $p): void
+    private function insertDescription(int $productId, SimpleXMLElement $p): void
     {
         foreach ($p->Description as $desc) {
             // skip inserting descriptions if missing
@@ -114,7 +116,6 @@ class XmlProductImport implements ImportInterface
 
     private function insertExtras(int $productId, SimpleXMLElement $p): void
     {
-        // extra categories
         if (!empty((string) $p['extra_categories'])) {
             // split comma values and insert into table
             foreach (explode(',', (string) $p['extra_categories']) as $cat) {
@@ -125,7 +126,6 @@ class XmlProductImport implements ImportInterface
             }
         }
 
-        // extra price
         if (!empty((string) $p['extra_price_trgovina'])) {
             $this->db->execute(
                 "INSERT IGNORE INTO zadatak3_extras (product_id, key_name, value) VALUES (?, ?, ?)",

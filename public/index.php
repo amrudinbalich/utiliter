@@ -1,6 +1,7 @@
+<?php require __DIR__ . '/../src/bootstrap.php'; ?>
 <html>
 <body>
-    <h1>Utiliter</h1>
+    <h1><?= env('APP_NAME') ?></h1>
     <ul>
         <li><a href="zadatak1.php">Zadatak 1 — ECB Import</a></li>
         <li><a href="zadatak2.php">Zadatak 2 — JSON Import</a></li>
