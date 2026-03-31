@@ -3,6 +3,7 @@
 namespace App\Utiliter\Services;
 
 use App\Utiliter\Contracts\ImportInterface;
+use App\Utiliter\DTO\ProductDTO;
 use App\Utiliter\Foundation\Database;
 
 class ProductImport implements ImportInterface
@@ -47,25 +48,10 @@ class ProductImport implements ImportInterface
             array_filter(array_column($data, 'proizvodjac')))
         )));
 
-        // normalized products
-        // DTO Pattern
-        $products = array_map(fn($p) => [
-            'robaid' => $p['robaid'],
-            'sifra' => $p['SIfra'],
-            'barcode' => $p['barcode'] ?? $p['barcode2'] ?? null,
-            'naziv' => $p['naziv'],
-            'opis' => $p['opis'] ?? null,
-            'specifikacija' => $p['specifikacija'] ?? null,
-            'cijena' => $p['MPCijena'],
-            'cijena_popust' => $p['mpcijenapopust'] ?? $p['MPCijena'], // default mpcijena
-            'jedinica_mjere' => $p['jm'] ?? null,
-            'stanje' => $p['stanje'] ?? 0, // quantity
-            'status' => $p['status'] ?? 1, // 0 or 1
-            'dob' => $p['dob'] ?? null,
-            'spol' => $p['spol'] ?? null,
-            'kategorija' => $p['kategorija'] ?? null, // kategorija_id (INT OR NULL)
-            'proizvodjac' => isset($p['proizvodjac']) ? normalizeString($p['proizvodjac']) : null, // proizvodjac_id (INT OR NULL)
-        ], $data);
+        $products = array_map(
+            fn($p) => ProductDTO::fromArray($p), 
+            $data
+        );
 
         return [
             $categories,
@@ -113,7 +99,6 @@ class ProductImport implements ImportInterface
      */
     private function insertProducts(array $products, array $categoryMap, array $manufacturerMap): void
     {
-        // $p can be of Type Product
         foreach ($products as $p) {
             $this->db->execute(
                 "INSERT IGNORE INTO zadatak2_produkti
@@ -121,23 +106,7 @@ class ProductImport implements ImportInterface
                     cijena, cijena_popust, jedinica_mjere, stanje, status,
                     dob, spol, kategorija_id, proizvodjac_id)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                [
-                    $p['robaid'],
-                    $p['sifra'],
-                    $p['barcode'],
-                    $p['naziv'],
-                    $p['opis'],
-                    $p['specifikacija'],
-                    $p['cijena'],
-                    $p['cijena_popust'],
-                    $p['jedinica_mjere'],
-                    $p['stanje'],
-                    $p['status'],
-                    $p['dob'],
-                    $p['spol'],
-                    isset($p['kategorija']) ? ($categoryMap[$p['kategorija']] ?? null) : null,
-                    isset($p['proizvodjac']) ? ($manufacturerMap[$p['proizvodjac']] ?? null) : null
-                ]
+                ProductDTO::toIndex($p)
             );
         }
     }
