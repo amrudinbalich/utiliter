@@ -34,6 +34,8 @@ docker compose up -d
 
 ⚠️ Portovi definisani u `docker-compose.yml` moraju biti slobodni.
 
+3. composer install
+
 ---
 
 ## ⚙️ Tehnologije
