@@ -24,8 +24,8 @@ class ProductImport implements ImportInterface
         $this->insertManufacturers($manufacturers);
         $this->insertProducts(
             products: $products,
-            categoryMap: $this->buildMap('zadatak2_kategorije'),
-            manufacturerMap: $this->buildMap('zadatak2_proizvodjaci')
+            categoryMap: $this->db->buildMap('zadatak2_kategorije', 'naziv'),
+            manufacturerMap: $this->db->buildMap('zadatak2_proizvodjaci', 'naziv')
         );
     }
 
@@ -102,23 +102,6 @@ class ProductImport implements ImportInterface
                 [$naziv]
             );
         }
-    }
-
-    /**
-     * Before inserting products, fetch existing categories/manufacturers
-     * from database with its title/id.
-     * @param string $table
-     * @return array
-     */
-    // todo: implement DRY principle
-    private function buildMap(string $table): array
-    {
-        $rows = $this->db->fetchAll("SELECT id, naziv FROM {$table}");
-        $map = [];
-        foreach ($rows as $row) {
-            $map[$row->naziv] = $row->id;
-        }
-        return $map;
     }
 
     /**

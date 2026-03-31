@@ -14,37 +14,22 @@ class XmlProductImport implements ImportInterface
     {
         $xml = simplexml_load_string(data: storage('data.xml'));
 
+        // categories & manufacturers
         foreach ($xml->CatalogProduct as $product) {
             $this->insertCategory((string) $product['category']);
             $this->insertManufacturer((string) $product['manufacturer']);
         }
 
-        // get maps
-        $categoryMap = $this->buildMap('zadatak3_categories');
-        $manufacturerMap = $this->buildMap('zadatak3_manufacturers');
-    
+        // maps
+        $categoryMap = $this->db->buildMap('zadatak3_categories');
+        $manufacturerMap = $this->db->buildMap('zadatak3_manufacturers');
+
+        // insert products
         foreach ($xml->CatalogProduct as $product) {
             $id = $this->insertProduct($product, $categoryMap, $manufacturerMap);
             $this->insertDescription($id, $product);
             $this->insertExtras($id, $product);
         }
-    }
-
-    /**
-     * Before inserting products, fetch existing categories/manufacturers
-     * from database with its title/id.
-     * @param string $table
-     * @return array
-     */
-    // implement DRY Principle
-    private function buildMap(string $table): array
-    {
-        $rows = $this->db->fetchAll("SELECT id, name FROM {$table}");
-        $map = [];
-        foreach ($rows as $row) {
-            $map[$row->name] = $row->id;
-        }
-        return $map;
     }
 
     private function insertProduct(SimpleXMLElement $p, array $categoryMap, array $manufacturerMap): int
