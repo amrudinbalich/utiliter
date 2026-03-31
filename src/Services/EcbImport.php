@@ -31,7 +31,7 @@ class EcbImport implements ImportInterface
         [$date, $currencyRates] = $this->fetch();
         $this->date = $date;
 
-        if($this->currenciesExists($date)) {
+        if($this->db->has('zadatak1_ecb', 'date', $date)) {
             $this->alreadyImported = true;
             return;
         }
@@ -79,21 +79,6 @@ class EcbImport implements ImportInterface
         }
 
         return [$date, $currencyRates];
-    }
-
-    /**
-     * Check if currencies for a given date already exist in the database.
-     * @param string $date
-     * @return bool
-     */
-    private function currenciesExists(string $date): bool
-    {
-        $existing = $this->db->fetch(
-            'SELECT id FROM zadatak1_ecb WHERE date = ? LIMIT 1',
-            [$date]
-        );
-
-        return $existing !== false;
     }
 
     /**

@@ -88,7 +88,7 @@ class Database {
      * @param array $params
      * @return PDOStatement
      */
-    public function query(string $sql, array $params = []): PDOStatement
+    private function prepareExecute(string $sql, array $params = []): PDOStatement
     {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
@@ -103,7 +103,7 @@ class Database {
      */
     public function fetchAll(string $sql, array $params = []): array
     {
-        return $this->query($sql, $params)->fetchAll() ?? [];
+        return $this->prepareExecute($sql, $params)->fetchAll() ?? [];
     }
  
     /**
@@ -114,7 +114,7 @@ class Database {
      */
     public function fetch(string $sql, array $params = []): object|false
     {
-        return $this->query($sql, $params)->fetch();
+        return $this->prepareExecute($sql, $params)->fetch();
     }
  
     /**
@@ -125,10 +125,42 @@ class Database {
      */
     public function execute(string $sql, array $params = []): int
     {
-        $stmt = $this->query($sql, $params);
+        $stmt = $this->prepareExecute($sql, $params);
  
         $id = $this->pdo->lastInsertId();
         return $id ? (int) $id : $stmt->rowCount();
+    }
+
+    /**
+     * Check if table has record.
+     * @param string $table
+     * @param string $column
+     * @param mixed $value
+     * @return bool
+     */
+    public function has(string $table, string $column, mixed $value): bool
+    {
+        return $this->fetch(
+            "SELECT id FROM {$table} WHERE {$column} = ? LIMIT 1",
+            [$value]
+        ) !== false;
+    }
+
+    /**
+     * Before inserting products, fetch existing categories/manufacturers
+     * from database with its title/id.
+     * @param string $table
+     * @param string $column
+     * @return array
+     */
+    public function buildMap(string $table, string $column = 'name'): array
+    {
+        $rows = $this->fetchAll("SELECT id, {$column} FROM {$table}");
+        $map = [];
+        foreach ($rows as $row) {
+            $map[$row->naziv] = $row->id;
+        }
+        return $map;
     }
 
 }

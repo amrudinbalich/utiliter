@@ -14,6 +14,7 @@ class XmlProductImport implements ImportInterface
     {
         $xml = simplexml_load_string(data: storage('data.xml'));
 
+        // categories & manufacturers
         foreach ($xml->CatalogProduct as $product) {
             $this->insertCategory((string) $product['category']);
             $this->insertManufacturer((string) $product['manufacturer']);

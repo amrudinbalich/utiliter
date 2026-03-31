@@ -3,6 +3,7 @@
 namespace App\Utiliter\Services;
 
 use App\Utiliter\Contracts\ImportInterface;
+use App\Utiliter\DTO\ProductDTO;
 use App\Utiliter\Foundation\Database;
 
 class ProductImport implements ImportInterface
@@ -24,8 +25,8 @@ class ProductImport implements ImportInterface
         $this->insertManufacturers($manufacturers);
         $this->insertProducts(
             products: $products,
-            categoryMap: $this->buildMap('zadatak2_kategorije'),
-            manufacturerMap: $this->buildMap('zadatak2_proizvodjaci')
+            categoryMap: $this->db->buildMap('zadatak2_kategorije', 'naziv'),
+            manufacturerMap: $this->db->buildMap('zadatak2_proizvodjaci', 'naziv')
         );
     }
 
@@ -138,23 +139,7 @@ class ProductImport implements ImportInterface
                     cijena, cijena_popust, jedinica_mjere, stanje, status,
                     dob, spol, kategorija_id, proizvodjac_id)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                [
-                    $p['robaid'],
-                    $p['sifra'],
-                    $p['barcode'],
-                    $p['naziv'],
-                    $p['opis'],
-                    $p['specifikacija'],
-                    $p['cijena'],
-                    $p['cijena_popust'],
-                    $p['jedinica_mjere'],
-                    $p['stanje'],
-                    $p['status'],
-                    $p['dob'],
-                    $p['spol'],
-                    isset($p['kategorija']) ? ($categoryMap[$p['kategorija']] ?? null) : null,
-                    isset($p['proizvodjac']) ? ($manufacturerMap[$p['proizvodjac']] ?? null) : null
-                ]
+                ProductDTO::toIndex($p)
             );
         }
     }
