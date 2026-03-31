@@ -13,7 +13,7 @@ Sve testove mozete naci u ```tests``` folderu.
 
 Testovi se pokrecu dok su u docker kontenjeru, sa komandom:
 ```bash
-docker compose exec php ./vendor/bin/phpunit
+docker compose exec php ./vendor/bin/phpunit --testdox
 ```
 
 Usput, baci pogled na ```docker-compose.yml``` - vidis nesto zanimljivo u servisima?
